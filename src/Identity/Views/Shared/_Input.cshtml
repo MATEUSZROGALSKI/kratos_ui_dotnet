@@ -1,0 +1,40 @@
+@using Ory.Kratos.Client.Model
+
+@model KratosUiNodeInputAttributes
+
+<div class="relative w-full">
+    <input 
+        class=" w-full text-sm  px-4 py-3 bg-gray-200 focus:bg-gray-100 border  border-gray-200 rounded-lg focus:outline-none focus:border-purple-400"
+        type="@Model.Type"
+        name="@Model.Name"
+        id="@Model.Name"
+        placeholder="@(Model.Label?.Text ?? @Model.Type.ToString())"
+        @if (Model.Disabled)
+        {
+            <text>disabled</text>
+        }
+        @if (Model.Required)
+        {
+            <text>required</text>
+        }
+        @if (Model.Value is not null)
+        {
+            <text>value="@Model.Value"</text>
+        }
+        />
+
+        @switch (Model.Type)
+        {
+            case Ory.Kratos.Client.Model.KratosUiNodeInputAttributes.TypeEnum.Password:
+                <div class="flex items-center absolute inset-y-0 right-0 mr-3 text-sm leading-5">
+                    <span class="material-symbols-outlined">lock</span>
+                </div>
+                break;
+
+            case Ory.Kratos.Client.Model.KratosUiNodeInputAttributes.TypeEnum.Email:
+                <div class="flex items-center absolute inset-y-0 right-0 mr-3 text-sm leading-5">
+                    <span class="material-symbols-outlined">mail</span>
+                </div>
+                break;
+        }
+</div>

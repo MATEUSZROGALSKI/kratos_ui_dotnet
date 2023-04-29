@@ -1,0 +1,33 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.bg {
+    background-image: url('/i/BG.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.lp-sign-in {
+    background-image: url('/i/SIGN_IN_LPANE.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.lp-sign-up {
+    background-image: url('/i/SIGN_UP_LPANE.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.glass {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.shadow {
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
