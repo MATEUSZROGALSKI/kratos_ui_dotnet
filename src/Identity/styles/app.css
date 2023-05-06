@@ -3,24 +3,25 @@
 @import "tailwindcss/utilities";
 
 .bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.bg-base {
     background-image: url('/i/BG.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
 }
 
-.lp-sign-in {
+.bg-sign-in {
     background-image: url('/i/SIGN_IN_LPANE.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
 }
 
-.lp-sign-up {
+.bg-sign-up {
     background-image: url('/i/SIGN_UP_LPANE.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+}
+
+.bg-verify {
+    background-image: url('/i/VERIFY_LPANE.jpg');
 }
 
 .glass {
@@ -30,4 +31,36 @@
 
 .shadow {
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+.checkbox-spin {
+    display: none;
+}
+
+.checkbox-spin + label span {
+    display: inline-block;
+    width: 25px;
+    height: 19px;
+    margin: 0 5px -4px 0; /*layout relationship between check and label*/
+}
+
+.checkbox-spin:before, .checkbox-spin:after {
+    @include transition(all .3s ease-in-out);
+    content: "";
+    position: absolute;
+    z-index: 1;
+    width: 1rem;
+    height: 1rem;
+    background: transparent;
+    border: 2px solid #FF4040;
+}
+
+.checkbox-spin:after {
+    z-index: 0;
+    border: none;
+}
+
+.checkbox-spin:checked:before + label span {
+    @include transform(rotateZ(180deg));
+    background: #FF4040;
 }

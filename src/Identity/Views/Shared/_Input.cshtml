@@ -9,20 +9,9 @@
         name="@Model.Name"
         id="@Model.Name"
         placeholder="@(Model.Label?.Text ?? @Model.Type.ToString())"
-        @if (Model.Disabled)
-        {
-            <text>disabled</text>
-        }
-        @if (Model.Required)
-        {
-            <text>required</text>
-        }
-        @if (Model.Value is not null)
-        {
-            <text>value="@Model.Value"</text>
-        }
-        />
-
+        disabled="@Model.Disabled"
+        required="@Model.Required"
+        value="@(Model.Value ?? string.Empty)" />
         @switch (Model.Type)
         {
             case Ory.Kratos.Client.Model.KratosUiNodeInputAttributes.TypeEnum.Password:

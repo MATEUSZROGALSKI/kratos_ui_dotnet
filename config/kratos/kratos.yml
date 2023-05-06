@@ -11,7 +11,7 @@ serve:
     base_url: http://kratos:4434/
 
 selfservice:
-  default_browser_return_url: http://127.0.0.1:4455/
+  default_browser_return_url: http://127.0.0.1:4455/account/settings
   allowed_return_urls:
     - http://127.0.0.1:4455
 
@@ -19,24 +19,32 @@ selfservice:
     password:
       enabled: true
     totp:
+      enabled: true
       config:
         issuer: Kratos
-      enabled: true
     lookup_secret:
       enabled: true
     link:
       enabled: true
     code:
       enabled: true
+    webauthn:
+      enabled: true
+      config:
+        passwordless: false
+        rp:
+          id: 127.0.0.1
+          display_name: id.mrogal.ski
+          origin: http://127.0.0.1/account/sign-in
 
   flows:
     error:
       ui_url: http://127.0.0.1:4455/error
 
     settings:
-      ui_url: http://127.0.0.1:4455/self/settings
+      ui_url: http://127.0.0.1:4455/account/settings
       privileged_session_max_age: 15m
-      required_aal: highest_available
+      required_aal: aal1
 
     recovery:
       enabled: true
@@ -48,28 +56,41 @@ selfservice:
       ui_url: http://127.0.0.1:4455/account/verification
       use: code
       after:
-        default_browser_return_url: http://127.0.0.1:4455/auth/sign-in
+        default_browser_return_url: http://127.0.0.1:4455/account/sign-in
 
     logout:
       after:
-        default_browser_return_url: http://127.0.0.1:4455/auth/sign-in
+        default_browser_return_url: http://127.0.0.1:4455/account/sign-in
 
     login:
-      ui_url: http://127.0.0.1:4455/auth/sign-in
+      ui_url: http://127.0.0.1:4455/account/sign-in
       lifespan: 10m
+      after:
+        webauthn:
+          hooks:
+            - hook: revoke_active_sessions
+        oidc:
+          hooks:
+            - hook: revoke_active_sessions
 
     registration:
       lifespan: 10m
-      ui_url: http://127.0.0.1:4455/auth/sign-up
+      ui_url: http://127.0.0.1:4455/account/sign-up
       after:
         password:
           hooks:
             - hook: session
             - hook: show_verification_ui
+        webauthn:
+          hooks:
+            - hook: session
+        oidc:
+          hooks:
+            - hook: session
 
 log:
-  level: debug
-  format: text
+  level: trace
+  format: json
   leak_sensitive_values: true
 
 secrets:
@@ -95,7 +116,13 @@ identity:
 cookies:
   domain: 127.0.0.1
   path: /
-  same_site: None
+  same_site: Lax
+
+session:
+  cookie:
+    name: id.mrogal.ski
+  whoami:
+    required_aal: aal1
 
 courier:
   smtp:
