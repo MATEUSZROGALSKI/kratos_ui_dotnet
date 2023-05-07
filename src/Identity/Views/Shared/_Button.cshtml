@@ -1,0 +1,14 @@
+﻿@model InputModel
+
+<div class="relative w-full flex flex-row justify-end">
+    <button
+        class="flex justify-center bg-purple-800 hover:bg-purple-700 text-gray-100 p-3 rounded-lg tracking-wide font-semibold  cursor-pointer transition ease-in duration-500"
+        type="@Model.Attributes.Type"
+        name="@Model.Attributes.Name"
+        id="@Model.Attributes.Name"
+        disabled="@Model.Attributes.Disabled"
+        required="@Model.Attributes.Required"
+        value="@(Model.Attributes.Value ?? string.Empty)">
+        @Model.Label
+    </button>
+</div>

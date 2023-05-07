@@ -33,6 +33,14 @@
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }
 
+.lead-button {
+    @apply flex justify-center bg-purple-800 text-gray-100 p-3 rounded-lg tracking-wide font-semibold cursor-pointer transition ease-in duration-500;
+}
+
+.lead-button:hover {
+    @apply bg-purple-700;
+}
+
 .checkbox-spin {
     display: none;
 }

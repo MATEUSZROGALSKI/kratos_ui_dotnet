@@ -44,11 +44,16 @@
                 "type": "string"
               }
             }
+          },
+          "tos": {
+            "type": "boolean",
+            "title": "Accept terms of service"
           }
         },
         "required": [
           "email",
-          "name"
+          "name",
+          "tos"
         ],
         "additionalProperties": false
       }

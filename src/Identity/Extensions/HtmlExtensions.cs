@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using Identity.Models;
+
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 using Ory.Kratos.Client.Model;
-
-using System.Xml.Linq;
-
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Identity.Extensions;
 
@@ -17,10 +16,18 @@ internal static class HtmlExtensions
     public static IHtmlContent BeginForm(this IHtmlHelper helper, string action, string method, string styles) => helper.Raw($@"<form class=""{styles}"" action=""{action}"" method=""{method}"">");
     public static IHtmlContent EndForm(this IHtmlHelper helper) => helper.Raw("</form>");
 
-    public static IHtmlContent RenderCheckboxField(this IHtmlHelper helper, KratosUiNodeInputAttributes attr) => helper.Raw($@"<input class=""checkbox-spin"" type=""checkbox"" id=""{attr.Name}"" name=""{attr.Name}"" {(attr.Disabled ? "disabled" : "")} {(attr.Required ? "required" : "")}/>");
-    public static IHtmlContent RenderHiddenField(this IHtmlHelper helper, KratosUiNodeInputAttributes attr) => helper.Raw($@"<input type=""{attr.Type}"" name=""{attr.Name}"" id=""{attr.Name}"" disabled=""{attr.Disabled}"" required=""{attr.Required}"" value=""{attr.Value ?? string.Empty}"" />");
-    public static IHtmlContent RenderInputField(this IHtmlHelper helper, KratosUiNodeInputAttributes attr, string text, string styles) => helper.Raw($@"<input class=""{styles}"" type=""{attr.Type}"" name=""{attr.Name}"" id=""{attr.Name}"" placeholder=""{text}"" {(attr.Disabled ? "disabled" : "")} {(attr.Required ? "required" : "")} value=""{attr.Value ?? string.Empty}"" {(string.IsNullOrEmpty(attr.Onclick) ? "" : $"onclick=\"{attr.Onclick}\" ")}/>");
-    public static IHtmlContent RenderButton(this IHtmlHelper helper, KratosUiNodeInputAttributes attr, string text, string styles) => helper.Raw(@$"<button class=""{styles}"" type=""{attr.Type}"" name=""{attr.Name}"" id=""{attr.Name}"" {(attr.Disabled ? "disabled" : "")} {(attr.Required ? "required" : "")} value=""{attr.Value ?? string.Empty}"">{text}</button>");
+    public static IHtmlContent RenderCheckboxField(this IHtmlHelper helper, KratosUiNodeInputAttributes attr) =>
+        helper.Partial("_CheckboxField", attr);
+
+    public static IHtmlContent RenderHiddenField(this IHtmlHelper helper, KratosUiNodeInputAttributes attr) =>
+        helper.Partial("_HiddenField", attr);
+    
+    public static IHtmlContent RenderInputField(this IHtmlHelper helper, KratosUiNodeInputAttributes attr, string text) => 
+        helper.Partial("_InputField", new InputModel(attr, text));
+
+    public static IHtmlContent RenderButton(this IHtmlHelper helper, KratosUiNodeInputAttributes attr, string text, string styles) =>
+        helper.Partial("_Button", new InputModel(attr, text));
+
     public static IHtmlContent RenderImage(this IHtmlHelper helper, KratosUiNodeImageAttributes attr, string styles) => helper.Raw($@"<img class=""{styles}"" src=""{attr.Src}"" id=""{attr.Id}"" width=""{attr.Width}"" height=""{attr.Height}"" />");
     public static IHtmlContent RenderAnchor(this IHtmlHelper helper, KratosUiNodeAnchorAttributes attr, string text, string styles) => helper.Raw($@"<a class=""{styles}"" href=""{attr.Href}"" id=""{attr.Id}"" title=""{attr.Title}"">{text}</a>");
     public static IHtmlContent RenderScript(this IHtmlHelper helper, KratosUiNodeScriptAttributes attr) => helper.Raw($@"<script src=""{attr.Src}"" {(attr.Async ? "async" : "")} type=""{attr.Type}""></script>");
@@ -39,18 +46,7 @@ internal static class HtmlExtensions
             case KratosUiNodeInputAttributes.TypeEnum.Url:
             case KratosUiNodeInputAttributes.TypeEnum.Tel:
             case KratosUiNodeInputAttributes.TypeEnum.Number:
-                builder.AppendHtml(helper.OpenDiv("relative w-full"));
-                builder.AppendHtml(helper.RenderInputField(
-                    attr,
-                    text,
-                    "w-full text-sm px-4 py-3 bg-gray-200 focus:bg-gray-100 border border-gray-200 rounded-lg focus:outline-none focus:border-purple-400"));
-                builder.AppendHtml(helper.Raw($@"<div class=""flex items-center absolute inset-y-0 right-0 mr-3 text-sm leading-5"">
-                <svg class=""h-4 text-purple-700"" fill=""none"" xmlns=""http://www.w3.org/2000/svg"" viewbox=""0 0 576 512"">
-                    <path fill=""currentColor"" d=""M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"">
-                    </path>
-                </svg>
-            </div>"));
-                builder.AppendHtml(helper.CloseDiv());
+                builder.AppendHtml(helper.RenderInputField(attr, text));
                 break;
 
             case KratosUiNodeInputAttributes.TypeEnum.Hidden:
