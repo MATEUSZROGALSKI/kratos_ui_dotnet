@@ -1,0 +1,13 @@
+﻿@using Ory.Kratos.Client.Model
+
+@model KratosUiNode
+@{
+    var attributes = Model.Attributes.GetKratosUiNodeImageAttributes();
+}
+
+<div class="relative w-full flex flex-row justify-center items-center">
+    <img src="@attributes.Src"
+         id="@attributes.Id"
+         height="@attributes.Height"
+         width="@attributes.Width" />
+</div>

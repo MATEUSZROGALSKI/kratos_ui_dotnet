@@ -1,0 +1,54 @@
+﻿@using Ory.Kratos.Client.Model
+
+@model KratosUiNode
+
+@{
+    var attributes = Model.Attributes.GetKratosUiNodeInputAttributes();
+}
+
+<div class="relative w-full">
+    <input class="w-full text-sm px-4 py-3 bg-gray-200 border border-gray-200 rounded-lg focus:bg-gray-100 focus:outline-none focus:border-purple-400"
+           type="@attributes.Type"
+           name="@attributes.Name"
+           id="@attributes.Name"
+           pattern="@attributes.Pattern"
+           autocomplete="@attributes.Autocomplete"
+           placeholder="@(Model.Meta?.Label?.Text ?? string.Empty)"
+           disabled="@attributes.Disabled"
+           required="@attributes.Required"
+           value="@attributes.Value"
+           onclick="@attributes.Onclick" />
+        <div class="flex items-center absolute inset-y-0 right-0 mr-3 text-sm leading-5 purple-400">
+            <span class="material-icons">
+            @switch(attributes.Type)
+            {
+                case KratosUiNodeInputAttributes.TypeEnum.Password:
+                    <text>lock</text>
+                    break;
+
+                case KratosUiNodeInputAttributes.TypeEnum.Email:
+                case KratosUiNodeInputAttributes.TypeEnum.Text:
+                    <text>person</text>
+                    break;
+
+                case KratosUiNodeInputAttributes.TypeEnum.Number:
+                    <text>calculator</text>
+                    break;
+
+                case KratosUiNodeInputAttributes.TypeEnum.Url:
+                    <text>browser</text>
+                    break;
+            }
+            </span>
+        </div>
+</div>
+
+@if(Model.Messages.Any())
+{
+    <ul class="w-full list-none rounded bg-red-500 text-slate-800 text-xs">
+    @foreach (var message in Model.Messages)
+    {
+        <li id="@message.Id">@message.Text</li>   
+    }
+    </ul>
+}

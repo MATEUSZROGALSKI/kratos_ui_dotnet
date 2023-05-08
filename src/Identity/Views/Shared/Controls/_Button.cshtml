@@ -1,0 +1,19 @@
+﻿@using Ory.Kratos.Client.Model
+
+@model KratosUiNode
+@{
+    var attributes = Model.Attributes.GetKratosUiNodeInputAttributes();
+}
+
+<div class="relative w-full flex flex-row justify-end">
+    <button
+        class="flex justify-center bg-purple-800 hover:bg-purple-700 text-gray-100 p-3 rounded-lg tracking-wide font-semibold  cursor-pointer transition ease-in duration-500"
+        type="@attributes.Type"
+        name="@attributes.Name"
+        id="@attributes.Name"
+        disabled="@attributes.Disabled"
+        required="@attributes.Required"
+        value="@attributes.Value">
+        @Model.Meta.Label.Text
+    </button>
+</div>

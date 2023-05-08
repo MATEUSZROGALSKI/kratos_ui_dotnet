@@ -1,0 +1,13 @@
+﻿@using Ory.Kratos.Client.Model
+
+@model KratosUiNode
+@{
+    var attributes = Model.Attributes.GetKratosUiNodeInputAttributes();
+}
+
+<input type="@attributes.Type"
+       name="@attributes.Name"
+       id="@attributes.Name"
+       disabled="@attributes.Disabled"
+       required="@attributes.Required"
+    value="@(attributes.Value ?? string.Empty)" />

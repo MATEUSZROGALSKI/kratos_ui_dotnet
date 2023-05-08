@@ -1,0 +1,10 @@
+﻿@using Ory.Kratos.Client.Model
+
+@model KratosUiNode
+@{
+    var attributes = Model.Attributes.GetKratosUiNodeTextAttributes();
+}
+
+<div class="relative w-full flex flex-row justify-center items-center">
+    <p id="@attributes.Id">@attributes.Text</p>
+</div>

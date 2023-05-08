@@ -1,0 +1,71 @@
+﻿@using Ory.Kratos.Client.Model
+
+@model KratosUiContainer
+
+@if(Model.Messages is not null)
+{
+    <ul class="w-full list-none rounded bg-red-500 text-slate-800 text-xs">
+    @foreach (var message in Model.Messages)
+    {
+        <p id="@message.Id">@message.Text</p>
+    }
+    </ul>
+}
+
+<form action="@Model.Action" method="@Model.Method">
+    <div class="space-y-4 w-full">
+        @foreach (var node in Model.Nodes)
+        {
+            switch (node.Type)
+            {
+                case KratosUiNode.TypeEnum.Input:
+                    var attributes = node.Attributes.GetKratosUiNodeInputAttributes();
+                    switch (attributes.Type)
+                    {
+                        case KratosUiNodeInputAttributes.TypeEnum.Password:
+                        case KratosUiNodeInputAttributes.TypeEnum.Text:
+                        case KratosUiNodeInputAttributes.TypeEnum.Email:
+                        case KratosUiNodeInputAttributes.TypeEnum.Url:
+                        case KratosUiNodeInputAttributes.TypeEnum.Number:
+                            <partial name="Controls/_InputField" for="@node" />
+                            break;
+
+                        case KratosUiNodeInputAttributes.TypeEnum.Submit:
+                        case KratosUiNodeInputAttributes.TypeEnum.Button:
+                            <partial name="Controls/_Button" for="@node" />
+                            break;
+
+                        case KratosUiNodeInputAttributes.TypeEnum.Hidden:
+                            <partial name="Controls/_HiddenField" for="@node" />
+                            break;
+
+                        case KratosUiNodeInputAttributes.TypeEnum.Checkbox:
+                            <partial name="Controls/_CheckboxField" for="@node" />
+                            break;
+                    }
+                    break;
+
+                case KratosUiNode.TypeEnum.Img:
+                    <partial name="Controls/_Image" for="@node" />
+                    break;
+
+                case KratosUiNode.TypeEnum.Text:
+                    <partial name="Controls/_Text" for="@node" />
+                    break;
+
+                case KratosUiNode.TypeEnum.Script:
+                    var scriptAttributes = node.Attributes.GetKratosUiNodeScriptAttributes();
+                    @section Scripts
+                    {
+                        <script src="@scriptAttributes.Src"
+                                type="@scriptAttributes.Type"
+                                integrity="@scriptAttributes.Integrity"
+                                referrerpolicy="@scriptAttributes.Referrerpolicy"
+                                crossorigin="@scriptAttributes.Crossorigin"
+                                async="@scriptAttributes.Async"></script>
+                    }
+                    break;
+            }
+        }
+    </div>
+</form>
