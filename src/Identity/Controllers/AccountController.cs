@@ -21,26 +21,6 @@ public class AccountController : Controller
         _kratosService = kratosService;
     }
 
-    private void Log(string message)
-    {
-        _logger.LogInformation($"[{HttpContext.TraceIdentifier} {HttpContext.Connection.Id} ({HttpContext.Connection.RemoteIpAddress})] {message}");
-    }
-
-    private async Task<IActionResult> FlowCheckAsync<TFlow>(string redirectUri, Func<string, string, Task<TFlow>> getFlowAsync)
-    {
-        var query = HttpContext.Request.Query;
-        if (!query.ContainsKey("flow"))
-        {
-            Log($"Flow not specified, redirecting to {redirectUri}");
-            return Redirect($"{redirectUri}{HttpContext.Request.QueryString}");
-        }
-        var cookie = HttpContext.Request.Headers.Cookie;
-        var flowId = HttpContext.Request.Query["flow"];
-        Log($"Retrieving kratos flow: '{flowId}'");
-        var flow = await getFlowAsync(flowId!, cookie!);
-        return View(flow);
-    }
-
     [HttpGet("sign-out")]
     public new async Task<IActionResult> SignOut()
     {
@@ -61,19 +41,19 @@ public class AccountController : Controller
     }
 
     [HttpGet("settings")]
-    public async Task<IActionResult> Settings()
+    public async Task<IActionResult> Settings([FromQuery(Name = "flow")] string flowId)
     {
         try
         {
-            return await FlowCheckAsync(
-                "http://127.0.0.1:4433/self-service/settings/browser",
-                async (flow, cookie) => await _kratosService.GetSettingsFlowAsync(flow, cookie));
+            var cookie = HttpContext.Request.Headers.Cookie;
+            var flow = await _kratosService.GetSettingsFlowAsync(flowId, cookie);
+            return View(flow);
         }
         catch (ApiException ex)
         {
             if (ex.ErrorCode == 403 || ex.ErrorCode == 401)
             {
-                return Redirect($"/account/sign-in?aal=aal2&refresh=true");
+                return Redirect($"{DockerValues.PublicUrl}/self-service/login/browser?aal=aal2");
             }
 
             return View("Error", new ErrorViewModel
@@ -85,13 +65,13 @@ public class AccountController : Controller
     }
 
     [HttpGet("verification")]
-    public async Task<IActionResult> Verification()
+    public async Task<IActionResult> Verification([FromQuery(Name = "flow")] string flowId)
     {
         try
         {
-            return await FlowCheckAsync(
-                "http://127.0.0.1:4433/self-service/verification/browser",
-                async (flow, cookie) => await _kratosService.GetVerificationFlowAsync(flow, cookie));
+            var cookie = HttpContext.Request.Headers.Cookie;
+            var flow = await _kratosService.GetVerificationFlowAsync(flowId, cookie);
+            return View(flow);
         }
         catch (Exception ex)
         {
@@ -104,13 +84,13 @@ public class AccountController : Controller
     }
 
     [HttpGet("sign-in")]
-    public async Task<IActionResult> SignIn()
+    public async Task<IActionResult> SignIn([FromQuery(Name = "flow")] string flowId)
     {
         try
         {
-            return await FlowCheckAsync(
-                "http://127.0.0.1:4433/self-service/login/browser",
-                async (flow, cookie) => await _kratosService.GetLoginFlowAsync(flow, cookie));
+            var cookie = HttpContext.Request.Headers.Cookie;
+            var flow = await _kratosService.GetLoginFlowAsync(flowId, cookie);
+            return View(flow);
         }
         catch (Exception ex)
         {
@@ -123,13 +103,13 @@ public class AccountController : Controller
     }
 
     [HttpGet("sign-up")]
-    public async Task<IActionResult> SignUp()
+    public async Task<IActionResult> SignUp([FromQuery(Name = "flow")] string flowId)
     {
-        try 
-        { 
-            return await FlowCheckAsync(
-                "http://127.0.0.1:4433/self-service/registration/browser",
-                async (flow, cookie) => await _kratosService.GetRegistrationFlowAsync(flow, cookie));
+        try
+        {
+            var cookie = HttpContext.Request.Headers.Cookie;
+            var flow = await _kratosService.GetRegistrationFlowAsync(flowId, cookie);
+            return View(flow);
         }
         catch (Exception ex)
         {

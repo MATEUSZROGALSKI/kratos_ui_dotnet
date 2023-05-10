@@ -51,7 +51,7 @@ selfservice:
         rp:
           id: 127.0.0.1
           display_name: id.mrogal.ski
-          origin: http://127.0.0.1/account/sign-in
+          origin: http://127.0.0.1/account/webauthn
 
   flows:
     error:
@@ -135,8 +135,12 @@ cookies:
   same_site: Lax
 
 session:
+  lifespan: 1h
+  earliest_possible_extend: 1h
   cookie:
     name: id.mrogal.ski
+    persistent: false
+    same_site: Lax
   whoami:
     required_aal: aal1
 
