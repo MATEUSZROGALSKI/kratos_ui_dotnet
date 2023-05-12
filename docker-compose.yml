@@ -25,8 +25,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - KRATOS_PUBLIC_URL=http://127.0.0.1:4433
       - KRATOS_ADMIN_URL=http://kratos:4433
-    #   - KRATOS_PUBLIC_URL=http://kratos:4433/
-    #   - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
+      # - KRATOS_PUBLIC_URL=http://kratos:4433/
+      # - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
     ports:
       - 4455:3000
     networks:

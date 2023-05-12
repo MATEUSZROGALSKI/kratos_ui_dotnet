@@ -1,4 +1,9 @@
-﻿using Ory.Kratos.Client.Api;
+﻿using Microsoft.Extensions.Options;
+
+using Newtonsoft.Json;
+
+using Ory.Kratos.Client.Api;
+using Ory.Kratos.Client.Client;
 
 namespace Identity.Middleware;
 
@@ -14,10 +19,12 @@ internal sealed class KratosMiddleware
 
     private readonly ILogger<KratosMiddleware> _logger;
     private readonly RequestDelegate _next;
-
-    public KratosMiddleware(RequestDelegate next, ILogger<KratosMiddleware> logger)
+    private readonly IFrontendApiAsync _kratosFrontendService;
+    
+    public KratosMiddleware(RequestDelegate next, IFrontendApiAsync kratosFrontendService, ILogger<KratosMiddleware> logger)
     {
         _logger = logger;
+        _kratosFrontendService = kratosFrontendService;
         _next = next;
     }
 
@@ -28,6 +35,24 @@ internal sealed class KratosMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        try
+        {
+            var session = await _kratosFrontendService.ToSessionAsync(cookie: context.Request.Headers.Cookie);
+            Log(context, $"SESSION: {JsonConvert.SerializeObject(session)}");
+            context.Items["session"] = session;
+        }
+        catch (ApiException ex)
+        {
+            //Log(context, ex.Message);
+
+            Log(context, $"ApiException: {JsonConvert.SerializeObject(ex)}");
+            if (ex.ErrorCode == 403)
+            {
+                context.Response.Redirect($"{DockerValues.PublicUrl}/self-service/login/browser?aal=aal2", false, false);
+                return;
+            }
+        }
+
         var query = context.Request.Query;
         if (!query.ContainsKey("flow"))
         {

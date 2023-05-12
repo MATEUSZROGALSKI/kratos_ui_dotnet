@@ -22,7 +22,7 @@ selfservice:
     totp:
       enabled: true
       config:
-        issuer: Kratos
+        issuer: id.mrogal.ski
     lookup_secret:
       enabled: true
     oidc:
@@ -45,13 +45,7 @@ selfservice:
     code:
       enabled: true
     webauthn:
-      enabled: true
-      config:
-        passwordless: true
-        rp:
-          id: 127.0.0.1
-          display_name: id.mrogal.ski
-          origin: http://127.0.0.1/account/webauthn
+      enabled: false
 
   flows:
     error:
@@ -60,7 +54,8 @@ selfservice:
     settings:
       ui_url: http://127.0.0.1:4455/account/settings
       privileged_session_max_age: 15m
-      required_aal: aal1
+      # required_aal: aal1
+      required_aal: highest_available
 
     recovery:
       enabled: true
@@ -82,12 +77,9 @@ selfservice:
       ui_url: http://127.0.0.1:4455/account/sign-in
       lifespan: 10m
       after:
-        webauthn:
-          hooks:
-            - hook: revoke_active_sessions
         oidc:
           hooks:
-            - hook: revoke_active_sessions
+            - hook: require_verified_address
 
     registration:
       lifespan: 10m
@@ -97,9 +89,6 @@ selfservice:
           hooks:
             - hook: session
             - hook: show_verification_ui
-        webauthn:
-          hooks:
-            - hook: session
         oidc:
           hooks:
             - hook: session

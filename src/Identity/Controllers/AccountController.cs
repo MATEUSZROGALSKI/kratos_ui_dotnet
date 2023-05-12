@@ -2,6 +2,8 @@ using Identity.Models;
 
 using Microsoft.AspNetCore.Mvc;
 
+using Newtonsoft.Json;
+
 using Ory.Kratos.Client.Api;
 using Ory.Kratos.Client.Client;
 
@@ -21,6 +23,13 @@ public class AccountController : Controller
         _kratosService = kratosService;
     }
 
+    private void Log(string message)
+    {
+        var context = HttpContext;
+        _logger.LogInformation($"[{context.TraceIdentifier} {context.Connection.Id} ({context.Connection.RemoteIpAddress})] {message}");
+    }
+
+
     [HttpGet("sign-out")]
     public new async Task<IActionResult> SignOut()
     {
@@ -28,6 +37,7 @@ public class AccountController : Controller
         {
             var cookie = HttpContext.Request.Headers.Cookie;
             var flow = await _kratosService.CreateBrowserLogoutFlowAsync(cookie);
+            Log(JsonConvert.SerializeObject(flow));
             return Redirect($"{flow.LogoutUrl}{HttpContext.Request.QueryString}");
         }
         catch (Exception ex)
@@ -46,16 +56,12 @@ public class AccountController : Controller
         try
         {
             var cookie = HttpContext.Request.Headers.Cookie;
-            var flow = await _kratosService.GetSettingsFlowAsync(flowId, cookie);
+            var flow = await _kratosService.GetSettingsFlowAsync(flowId, cookie: cookie);
+            Log(JsonConvert.SerializeObject(flow));
             return View(flow);
         }
         catch (ApiException ex)
         {
-            if (ex.ErrorCode == 403 || ex.ErrorCode == 401)
-            {
-                return Redirect($"{DockerValues.PublicUrl}/self-service/login/browser?aal=aal2");
-            }
-
             return View("Error", new ErrorViewModel
             {
                 Error = ex.Message,
@@ -70,7 +76,8 @@ public class AccountController : Controller
         try
         {
             var cookie = HttpContext.Request.Headers.Cookie;
-            var flow = await _kratosService.GetVerificationFlowAsync(flowId, cookie);
+            var flow = await _kratosService.GetVerificationFlowAsync(flowId, cookie: cookie);
+            Log(JsonConvert.SerializeObject(flow));
             return View(flow);
         }
         catch (Exception ex)
@@ -89,7 +96,8 @@ public class AccountController : Controller
         try
         {
             var cookie = HttpContext.Request.Headers.Cookie;
-            var flow = await _kratosService.GetLoginFlowAsync(flowId, cookie);
+            var flow = await _kratosService.GetLoginFlowAsync(flowId, cookie:cookie);
+            Log(JsonConvert.SerializeObject(flow));
             return View(flow);
         }
         catch (Exception ex)
@@ -108,7 +116,8 @@ public class AccountController : Controller
         try
         {
             var cookie = HttpContext.Request.Headers.Cookie;
-            var flow = await _kratosService.GetRegistrationFlowAsync(flowId, cookie);
+            var flow = await _kratosService.GetRegistrationFlowAsync(flowId, cookie: cookie);
+            Log(JsonConvert.SerializeObject(flow));
             return View(flow);
         }
         catch (Exception ex)
