@@ -18,15 +18,14 @@ services:
       - intranet
   kratos-selfservice-ui-node:
     build:
-      context: src/Identity
-    # image: oryd/kratos-selfservice-ui-node:v0.13.0
+      context: ./
     environment:
       - LISTENING_PORT=3000
       - ASPNETCORE_ENVIRONMENT=Development
       - KRATOS_PUBLIC_URL=http://127.0.0.1:4433
-      - KRATOS_ADMIN_URL=http://kratos:4433
-      # - KRATOS_PUBLIC_URL=http://kratos:4433/
-      # - KRATOS_BROWSER_URL=http://127.0.0.1:4433/
+      - KRATOS_INTERNAL_URL=http://kratos:4433
+      - COOKIE_SCHEMA_NAME=id.mrogal.ski
+      - KRATOS_COOKIE_NAME=id.mrogal.ski
     ports:
       - 4455:3000
     networks:

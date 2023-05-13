@@ -1,11 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-
-using Newtonsoft.Json;
-
-using Ory.Kratos.Client.Api;
-using Ory.Kratos.Client.Client;
-
-namespace Identity.Middleware;
+﻿namespace Identity.Middleware;
 
 internal sealed class KratosMiddleware
 {
@@ -19,12 +12,10 @@ internal sealed class KratosMiddleware
 
     private readonly ILogger<KratosMiddleware> _logger;
     private readonly RequestDelegate _next;
-    private readonly IFrontendApiAsync _kratosFrontendService;
     
-    public KratosMiddleware(RequestDelegate next, IFrontendApiAsync kratosFrontendService, ILogger<KratosMiddleware> logger)
+    public KratosMiddleware(RequestDelegate next, ILogger<KratosMiddleware> logger)
     {
         _logger = logger;
-        _kratosFrontendService = kratosFrontendService;
         _next = next;
     }
 
@@ -35,31 +26,15 @@ internal sealed class KratosMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        try
-        {
-            var session = await _kratosFrontendService.ToSessionAsync(cookie: context.Request.Headers.Cookie);
-            Log(context, $"SESSION: {JsonConvert.SerializeObject(session)}");
-            context.Items["session"] = session;
-        }
-        catch (ApiException ex)
-        {
-            //Log(context, ex.Message);
-
-            Log(context, $"ApiException: {JsonConvert.SerializeObject(ex)}");
-            if (ex.ErrorCode == 403)
-            {
-                context.Response.Redirect($"{DockerValues.PublicUrl}/self-service/login/browser?aal=aal2", false, false);
-                return;
-            }
-        }
-
         var query = context.Request.Query;
         if (!query.ContainsKey("flow"))
         {
-            Log(context, $"Flow not specified! Rerouting request to Kratos.");
-            var redirectUri = _kratosRedirects[context.Request.Path];
-            context.Response.Redirect($"{DockerValues.PublicUrl}{redirectUri}{context.Request.QueryString}");
-            return;
+            if (_kratosRedirects.TryGetValue(context.Request.Path, out var redirectUri))
+            {
+                Log(context, $"Flow not specified! Rerouting request to Kratos.");
+                context.Response.Redirect($"{EnvironmentVariables.PublicUrl}{redirectUri}{context.Request.QueryString}");
+                return;
+            }
         }
         await _next(context);
     }

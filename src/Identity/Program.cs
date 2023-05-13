@@ -1,18 +1,11 @@
 using Identity;
+using Identity.Common;
 using Identity.Middleware;
 
-using Microsoft.AspNetCore.Authentication.Cookies;
-
-using Ory.Kratos.Client.Api;
-using Ory.Kratos.Client.Client;
-
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.ConfigureKestrel(opt => opt.ListenAnyIP(DockerValues.ListeningPort));
-//builder.Services.AddAuthentication("IdentityCookieScheme")
-//      .AddScheme<KratosAuthenticationOptions, KratosAu2thenticationHandler>("Kratos", null);
+builder.WebHost.ConfigureKestrel(opt => opt.ListenAnyIP(EnvironmentVariables.ListeningPort));
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IFrontendApiAsync>(provider =>
-    new FrontendApi(new Configuration { BasePath = DockerValues.AdminUrl }));
+builder.Services.AddKratosIntegration();
 
 var app = builder.Build();
 

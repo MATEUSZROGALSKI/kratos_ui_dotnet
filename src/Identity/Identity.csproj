@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ory.Kratos.Client" Version="0.11.1" />
+    <ProjectReference Include="..\Identity.Common\Identity.Common.csproj" />
   </ItemGroup>
 
   <Target Name="CheckForNpm" BeforeTargets="NpmInstall">

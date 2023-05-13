@@ -1,3 +1,4 @@
+using Identity.Common.Authentication.Attributes;
 using Identity.Models;
 
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +16,9 @@ namespace Identity.Controllers;
 public class AccountController : Controller
 {
     private readonly ILogger<AccountController> _logger;
-    private readonly IFrontendApiAsync _kratosService;
+    private readonly IFrontendApi _kratosService;
 
-    public AccountController(IFrontendApiAsync kratosService, ILogger<AccountController> logger)
+    public AccountController(IFrontendApi kratosService, ILogger<AccountController> logger)
     {
         _logger = logger;
         _kratosService = kratosService;
@@ -30,7 +31,7 @@ public class AccountController : Controller
     }
 
 
-    [HttpGet("sign-out")]
+    [HttpGet("sign-out"), KratosAuthorized]
     public new async Task<IActionResult> SignOut()
     {
         try
