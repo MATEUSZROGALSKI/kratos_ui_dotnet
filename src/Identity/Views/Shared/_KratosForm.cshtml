@@ -2,14 +2,11 @@
 
 @model KratosUiContainer
 
-@if (Model.Messages is not null)
+@if (Model.Messages is not null && Model.Messages.Any())
 {
-    <ul class="w-full list-none rounded bg-red-500 text-slate-800 text-xs">
-        @foreach (var message in Model.Messages)
-        {
-            <p id="@message.Id">@message.Text</p>
-        }
-    </ul>
+    <div class="space-y-2 my-2 w-full">
+        <partial name="Controls/_FormMessage" for="@Model.Messages" />
+    </div>
 }
 
 <div class="w-full">

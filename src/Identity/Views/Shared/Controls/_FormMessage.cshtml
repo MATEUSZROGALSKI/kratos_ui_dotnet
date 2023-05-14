@@ -1,0 +1,52 @@
+@using Ory.Kratos.Client.Model
+
+@model List<KratosUiText>
+
+@{
+    var groups = Model.GroupBy(m => m.Type).ToDictionary(m => m.Key, m => m.ToList());
+}
+
+@if (groups.ContainsKey(KratosUiText.TypeEnum.Error))
+{
+    <div class="w-full rounded outline outline-2 outline-offset-1 outline-red-700 flex flex-row">
+        <div class="bg-red-700 px-4 rounded-l flex flex-col justify-center items-center">
+            <p class="text-3xl text-white">!</p>
+        </div>
+        <div class="w-full rounded-r flex flex-col p-2">
+            @foreach (var message in groups[KratosUiText.TypeEnum.Error])
+            {
+                <p class="text-xs" id="@message.Id">@message.Text</p>
+            }
+        </div>
+    </div>
+}
+
+@if (groups.ContainsKey(KratosUiText.TypeEnum.Success))
+{
+    <div class="w-full rounded outline outline-2 outline-offset-1 outline-green-700 flex flex-row">
+        <div class="bg-green-700 px-4 rounded-l">
+            <p class="text-3xl text-white">!</p>
+        </div>
+        <div class="w-full rounded-r flex flex-col p-2">
+            @foreach (var message in groups[KratosUiText.TypeEnum.Success])
+            {
+                <p class="text-xs" id="@message.Id">@message.Text</p>
+            }
+        </div>
+    </div>
+}
+
+@if (groups.ContainsKey(KratosUiText.TypeEnum.Info))
+{
+    <div class="w-full rounded outline outline-2 outline-offset-1 outline-slate-700 flex flex-row">
+        <div class="bg-slate-700 px-4 rounded-l">
+            <p class="text-3xl text-white">!</p>
+        </div>
+        <div class="w-full rounded-r flex flex-col p-2">
+            @foreach (var message in groups[KratosUiText.TypeEnum.Info])
+            {
+                <p class="text-xs" id="@message.Id">@message.Text</p>
+            }
+        </div>
+    </div>
+}

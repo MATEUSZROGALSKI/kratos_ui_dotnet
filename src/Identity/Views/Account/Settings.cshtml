@@ -2,6 +2,8 @@
 
 @model KratosSettingsFlow
 
-<div class="h-2/3 w-2/3 rounded glass shadow flex flex-row justify-center align-center overflow-y-scroll">
-    <partial name="_KratosForm" for="@Model.Ui" />
+<div class="h-4/5 w-1/3 rounded glass shadow overflow-y-scroll">
+    <div class="w-full bg-white p-4 rounded  flex flex-col justify-center align-center">
+        <partial name="_KratosSettings" for="@Model.Ui" />
+    </div>
 </div>

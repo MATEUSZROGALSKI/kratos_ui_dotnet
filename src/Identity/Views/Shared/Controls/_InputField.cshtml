@@ -41,12 +41,9 @@
     </div>
 </div>
 
-@if(Model.Messages.Any())
+@if (Model.Messages is not null && Model.Messages.Any())
 {
-    <ul class="w-full list-none rounded bg-red-500 text-slate-800 text-xs">
-    @foreach (var message in Model.Messages)
-    {
-        <li id="@message.Id">@message.Text</li>   
-    }
-    </ul>
+    <div class="space-y-2 my-2 w-full">
+        <partial name="Controls/_FormMessage" for="@Model.Messages" />
+    </div>
 }

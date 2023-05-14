@@ -46,7 +46,11 @@ public sealed class KratosAuthenticationHandler : AuthenticationHandler<KratosAu
                 {
                     if (ex.ErrorCode == 403)
                     {
-                        Response.Redirect($"{EnvironmentVariables.PublicUrl}/self-service/login/browser?aal=aal2");
+                        // check session aal
+                        // if aal < 3 increment by 1 and redirect to login url with return_to that points to requested url
+                        // if aal is the user max aal
+                        // redirect to some page saying "unauthorized"
+                        Response.Redirect($"{EnvironmentVariables.PublicUrl}/self-service/login/browser?aal=aal2&return_to={Request.Path}");
                         return AuthenticateResult.Fail(ex.Message);
                     }
                 }
@@ -68,9 +72,9 @@ public sealed class KratosAuthenticationHandler : AuthenticationHandler<KratosAu
         }
 
         var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, session.Identity.Id),
-            };
+        {
+            new Claim(ClaimTypes.NameIdentifier, session.Identity.Id),
+        };
 
         var identity = new ClaimsIdentity(claims, Scheme.Name);
         var principal = new System.Security.Principal.GenericPrincipal(identity, null);

@@ -2,7 +2,7 @@
 
 @model KratosLoginFlow
 
-<div class="h-2/3 w-2/3 rounded glass shadow flex flex-row justify-center align-center">
+<div class="h-2/3 w-3/5 rounded glass shadow flex flex-row justify-center align-center">
     <div class="bg bg-sign-in w-1/2 h-full rounded-l"></div>
     <div class="w-1/2 h-full bg-white p-4 rounded-r flex flex-col justify-between items-center">
 
@@ -10,11 +10,11 @@
             <h3 class="font-semibold text-2xl text-gray-800">Sign In!</h3>
         </div>
 
-        <div class="w-2/3">
+        <div class="w-4/5">
             <partial name="_KratosForm" for="@Model.Ui" />
         </div>
         
-        <div class="space-y-2 w-2/3 mb-2">
+        <div class="space-y-2 w-4/5 mb-2">
 
             <div class="flex justify-center px-5">
                 <p class="text-gray-400 text-center">Don'thave an account? <a href="/account/sign-up" class="text-sm text-purple-700 hover:text-purple-700">Sign Up</a></p>
